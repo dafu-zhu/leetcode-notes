@@ -37,7 +37,24 @@
 
     <p><span class="beat">Handle the odd case</span>What if <code>n</code> is odd? Then <code>n/2</code> isn't clean. Split off one factor: <code>x^n = x &middot; (x&middot;x)^((n-1)/2)</code>. So an odd exponent costs me exactly <strong>one extra multiply by the current base</strong>, and then it's even again. That single sentence is the entire algorithm &mdash; and it's precisely the step the broken version fumbled.</p>
 
-    <p><span class="beat">Reframe as binary</span>Squaring-and-halving is just reading <code>n</code> in binary. Position <code>i</code> contributes <code>x^(2^i)</code>: the base I get by squaring <code>i</code> times. The answer is the product of <code>x^(2^i)</code> over every position where <code>n</code> has a <code>1</code> bit. So I walk the bits from the bottom: keep a <em>running base</em> that I square every step, and whenever the current bit is <code>1</code>, multiply that base into the answer.</p>
+    <p><span class="beat">Reframe as binary</span>Here's the reframe that makes it click &mdash; two facts. <strong>One:</strong> every exponent is a sum of powers of two, because that's exactly what its binary form <em>is</em>: <code>13 = 1101&#8322; = 8 + 4 + 1</code>. <strong>Two:</strong> <code>x^(a+b) = x^a &middot; x^b</code> &mdash; adding exponents means multiplying powers. Put them together and the power splits along the <code>1</code> bits: <code>3^13 = 3^(8+4+1) = 3^8 &middot; 3^4 &middot; 3^1</code>. And where do <code>3^1, 3^2, 3^4, 3^8</code> come from? <em>Repeated squaring</em> &mdash; each square doubles the exponent. So I march the base through <code>x^1, x^2, x^4, x^8…</code> by squaring, read <code>n</code>'s bits from the bottom with <code>n &amp; 1</code>, and multiply in only the bases whose bit is <code>1</code>.</p>
+
+    <figure class="example">
+      <figcaption>Watch it compute <code>3^13</code> &mdash; split 13 along its bits, then let the base square one step at a time:</figcaption>
+      <div class="binbreak">13 = <b>1101</b>&#8322; = 8 + 4 + 1&nbsp;&nbsp;&rarr;&nbsp;&nbsp;3<sup>13</sup> = 3<sup>8</sup> &middot; 3<sup>4</sup> &middot; 3<sup>1</sup></div>
+      <div class="trace-wrap">
+      <table class="trace">
+        <thead><tr><th>step&nbsp;i</th><th>bit&nbsp;i&nbsp;of&nbsp;13</th><th>base = 3<sup>(2^i)</sup></th><th>bit set?</th><th>result</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>1</td><td>3<sup>1</sup> = 3</td><td class="on">yes &times;</td><td class="res">3</td></tr>
+          <tr><td>1</td><td>0</td><td>3<sup>2</sup> = 9</td><td class="off">skip</td><td class="res">3</td></tr>
+          <tr><td>2</td><td>1</td><td>3<sup>4</sup> = 81</td><td class="on">yes &times;</td><td class="res">243</td></tr>
+          <tr><td>3</td><td>1</td><td>3<sup>8</sup> = 6561</td><td class="on">yes &times;</td><td class="res">1,594,323</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption class="foot">Only the set bits &mdash; 0, 2, 3 &mdash; multiply in: <code>3 &middot; 81 &middot; 6561 = 1,594,323 = 3^13</code>. &check; The base is <em>always</em> squaring; the bit just decides whether it joins the product.</figcaption>
+    </figure>
 
     <p><span class="beat">Sign and zero</span>Negatives: <code>x^(-n) = (1/x)^n</code>. I handle it <em>once</em>, at the top &mdash; flip <code>x</code> to <code>1/x</code> and <code>n</code> to <code>-n</code> &mdash; so the core loop only ever sees a non-negative exponent. Zero falls out for free: the loop just doesn't run and the answer stays <code>1</code>.</p>
 

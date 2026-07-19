@@ -34,7 +34,14 @@ user's thinking, throw the code away, and rebuild the solution from the first re
    what's it really asking → where's the leverage / entry point → develop the
    approach step by step → edge cases → write it. Name the *trigger* that should
    fire next time ("exponent + must be sub-linear → square-and-halve").
-5. **End with the transferable pattern**, plus a one-sentence invariant/principle
+5. **Show, don't assert.** Any step that is non-obvious — a bitwise trick, a
+   reindexing, a DP recurrence, a two-pointer invariant — must be *visualized on a
+   concrete example*, never just stated. Pick one small input and walk it through
+   the mechanism in a `.example` figure with a `.trace` table (columns = the state
+   at each step; highlight the cells that "fire"). If the reader could still ask
+   "but why does that work?", you asserted instead of showed. See the "Reframe as
+   binary" figure in `problems/0050-powx-n/tutorial.html` for the reference shape.
+6. **End with the transferable pattern**, plus a one-sentence invariant/principle
    and where else the shape shows up.
 
 ## Workflow
@@ -85,7 +92,9 @@ Link `../../style.css` (never inline CSS). Sections, in order:
 - **verdict** div with class `sound|partial|wrong` + 2–4 sentence idea judgement +
   the "keeping the idea, dropping the code" line
 - **From scratch — thinking out loud**: a `.think` block of `.beat`-labelled
-  paragraphs (the monologue)
+  paragraphs (the monologue). Embed a `.example` figure (with a `.trace` table) at
+  the step that is hardest to see — walk one concrete input through it (per voice
+  rule 5).
 - a `.callout` with the algorithm in one sentence
 - **The full solution**: highlighted `<pre>` (spans `c-kw c-fn c-num c-str c-com c-op`)
   + a complexity line
