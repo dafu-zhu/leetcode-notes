@@ -20,27 +20,35 @@
     </div>
   </header>
 
-  <!-- ============ VERDICT ============ -->
-  <!-- verdict class = sound | partial | wrong -->
-  <div class="verdict {{VERDICT_CLASS}}">{{VERDICT_HEADLINE}}</div>
-  {{VERDICT_PARAGRAPHS}}
-  <p class="muted">We keep the idea and rebuild the code from the first read.</p>
+  <p class="lede">{{APPROACH_ONE_LINE}}</p>
 
-  <!-- ============ FROM SCRATCH ============ -->
-  <h2 class="sec">Solving it from scratch</h2>
-  <p class="lede">{{LEDE}}</p>
-
-  <div class="think">
-    <!-- one <p> per beat: <span class="beat">Label</span>monologue... -->
-    {{THINK_BEATS}}
-  </div>
-
+  <!-- ============ INTUITION ============ -->
+  <h2 class="sec">Intuition</h2>
+  {{INTUITION_PARAGRAPHS}}
+  <!-- optional key formula / recurrence -->
   <div class="callout">
-    <span class="lbl">The algorithm in one sentence</span>
-    {{ALGORITHM_ONE_LINER}}
+    <span class="lbl">{{CALLOUT_LABEL}}</span>
+    {{CALLOUT_BODY}}
   </div>
+  {{INTUITION_CONTINUED}}
 
-  <!-- ============ SOLUTION ============ -->
+  <!-- ============ WORKED EXAMPLE ============ -->
+  <h2 class="sec">Watch it run</h2>
+  <p>{{EXAMPLE_SETUP}}</p>
+  <figure class="example">
+    <figcaption>{{EXAMPLE_CAPTION}}</figcaption>
+    <!-- a .trace table, or short before/after <pre> listings for a recursion -->
+    {{EXAMPLE_BODY}}
+    <figcaption class="foot">{{EXAMPLE_FOOT}}</figcaption>
+  </figure>
+
+  <!-- ============ ALGORITHM ============ -->
+  <h2 class="sec">Algorithm</h2>
+  <ol>
+    {{ALGORITHM_STEPS}}
+  </ol>
+
+  <!-- ============ SOLUTION (provided by the user, transcribed faithfully) ============ -->
   <h2 class="sec">The full solution</h2>
   <pre>{{SOLUTION_CODE_HTML}}</pre>
   <p class="muted">{{COMPLEXITY_NOTE}}</p>
@@ -48,7 +56,7 @@
   <!-- ============ TAKEAWAY ============ -->
   <h2 class="sec">Takeaway</h2>
   <div class="takeaway">
-    <span class="lbl">Pattern &middot; carry forward</span>
+    <span class="lbl">Pattern to carry forward</span>
     <p class="principle">{{PRINCIPLE}}</p>
   </div>
   {{PATTERN_RECURRENCE}}

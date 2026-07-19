@@ -1,20 +1,21 @@
 """50. Pow(x, n)
 https://leetcode.com/problems/powx-n/
 
-Binary (fast) exponentiation. Read n in binary from the low bit up: whenever
-the current bit is 1, the running answer owes a factor of the *current* base;
-every step squares the base and shifts n right. O(log n) time, O(1) space.
+Binary exponentiation, recursive. Each call squares the base and halves the
+exponent, so computing x^n takes about log2(n) multiplications instead of n.
+Approach and code provided by the user.
 """
 
 
 class Solution:
     def myPow(self, x: float, n: int) -> float:
-        if n < 0:              # x^(-n) == (1/x)^n, so flip the sign once, up front
-            x, n = 1 / x, -n
-        result = 1.0
-        while n:
-            if n & 1:          # low bit set -> multiply in the base at this position
-                result *= x
-            x *= x             # square the base for the next binary position
-            n >>= 1            # drop the consumed bit
-        return result
+        def helper(x, n):
+            if x == 0:                     # 0 to any positive power is 0
+                return 0
+            if n == 0:                     # base case: anything to the power 0 is 1
+                return 1
+            res = helper(x * x, n // 2)    # square the base, halve the exponent
+            return x * res if n % 2 else res   # odd n keeps one extra factor of x
+
+        res = helper(x, abs(n))            # compute the magnitude with a non-negative power
+        return res if n >= 0 else 1 / res  # reciprocal when the original power was negative

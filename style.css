@@ -135,6 +135,7 @@ em{font-style:italic;color:var(--ink)}
 .trace td.off{color:var(--faint)}
 .trace td.res{color:var(--ink);font-weight:600}
 .trace sup{font-size:.72em}
+.example pre{margin:10px 0;background:#fff}
 
 /* code */
 pre{

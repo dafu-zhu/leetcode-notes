@@ -20,82 +20,87 @@
     </div>
   </header>
 
-  <!-- ============ VERDICT ============ -->
-  <div class="verdict partial">Idea: right approach, wrong execution</div>
-  <p>Your instinct is correct. Squaring the base to halve the exponent is binary exponentiation, and it is the intended O(log n) solution. Keep the idea.</p>
-  <p>The mistake is in the odd exponent step. When the exponent is odd, you owe one extra multiply by the current base. Your code instead counted the odd steps in an integer and multiplied by <code>x0</code> raised to that count. That correction grows as the recursion goes deeper, and it ignores the sign of <code>n</code>, so the result is only correct for some inputs.</p>
-  <p class="muted">That is the whole critique. We keep the idea and rebuild the code from the first read.</p>
+  <p class="lede">Approach: binary exponentiation, written recursively.</p>
 
-  <!-- ============ FROM SCRATCH ============ -->
-  <h2 class="sec">Solving it from scratch</h2>
-  <p class="lede">Here is the reasoning as it would actually go, starting from the first time I read the problem.</p>
-
-  <div class="think">
-    <p><span class="beat">Read it</span>The task is to compute <code>x</code> raised to the power <code>n</code>. The constraints matter: <code>n</code> can be as large as about two billion, and it can be negative or zero. Multiplying <code>x</code> by itself <code>n</code> times would take up to two billion steps, which is too slow. So the real question is whether I can compute <code>x^n</code> with far fewer multiplications.</p>
-
-    <p><span class="beat">Find the key idea</span>I want to reuse work instead of repeating it. The identity that helps is <code>x^n = (x&middot;x)^(n/2)</code>. Squaring the base once lets me halve the exponent. If I keep halving, the number of steps drops from <code>n</code> to about <code>log&#8322; n</code>, which is roughly 31 steps instead of two billion. That is the core idea: when the exponent is large and I need something faster than linear, I square the base to halve the exponent.</p>
-
-    <p><span class="beat">Handle an odd exponent</span>What if <code>n</code> is odd? Then <code>n/2</code> is not exact. I split off one factor: <code>x^n = x &middot; (x&middot;x)^((n-1)/2)</code>. So an odd exponent costs one extra multiply by the current base, and after that the exponent is even again. This is the exact step the original code got wrong.</p>
-
-    <p><span class="beat">See it as binary</span>There is a cleaner way to see the whole thing, and it rests on two facts. First, every exponent is a sum of powers of two, because that is what binary notation means: <code>13 = 1101&#8322; = 8 + 4 + 1</code>. Second, <code>x^(a+b) = x^a &middot; x^b</code>, so adding exponents is the same as multiplying powers. Put together, they split the power along the <code>1</code> bits of <code>n</code>: <code>3^13 = 3^(8+4+1) = 3^8 &middot; 3^4 &middot; 3^1</code>.</p>
-
-    <p><span class="beat">Build the powers by squaring</span>Computing <code>3^8</code> and <code>3^4</code> might sound like extra work, but it is not, because each value is the square of the one before it:</p>
-    <pre>3^1 = 3
-3^2 = 3^1 &times; 3^1 = 9
-3^4 = 3^2 &times; 3^2 = 81
-3^8 = 3^4 &times; 3^4 = 6561</pre>
-    <p>Squaring a power doubles its exponent, since <code>(3^a)^2 = 3^(2a)</code>. So four squarings give me every value I need. In the loop, a single variable holds the base and squares itself on each pass, taking the values 3, 9, 81, 6561. On each pass I look at one bit of <code>n</code>, reading from the lowest bit with <code>n &amp; 1</code>. When that bit is <code>1</code>, I multiply the current base into the answer. When it is <code>0</code>, I skip it.</p>
-
-    <figure class="example">
-      <figcaption>Here is the full computation of <code>3^13</code>. Split 13 into its bits, then let the base square one step at a time:</figcaption>
-      <div class="binbreak">13 = <b>1101</b>&#8322; = 8 + 4 + 1&nbsp;&nbsp;&rarr;&nbsp;&nbsp;3<sup>13</sup> = 3<sup>8</sup> &middot; 3<sup>4</sup> &middot; 3<sup>1</sup></div>
-      <div class="trace-wrap">
-      <table class="trace">
-        <thead><tr><th>step&nbsp;i</th><th>bit&nbsp;i&nbsp;of&nbsp;13</th><th>base = 3<sup>(2^i)</sup></th><th>bit is 1?</th><th>result</th></tr></thead>
-        <tbody>
-          <tr><td>0</td><td>1</td><td>3<sup>1</sup> = 3</td><td class="on">yes, multiply</td><td class="res">3</td></tr>
-          <tr><td>1</td><td>0</td><td>3<sup>2</sup> = 9</td><td class="off">no, skip</td><td class="res">3</td></tr>
-          <tr><td>2</td><td>1</td><td>3<sup>4</sup> = 81</td><td class="on">yes, multiply</td><td class="res">243</td></tr>
-          <tr><td>3</td><td>1</td><td>3<sup>8</sup> = 6561</td><td class="on">yes, multiply</td><td class="res">1,594,323</td></tr>
-        </tbody>
-      </table>
-      </div>
-      <figcaption class="foot">Only the bits equal to <code>1</code>, at positions 0, 2, and 3, multiply into the result: <code>3 &middot; 81 &middot; 6561 = 1,594,323 = 3^13</code>. The base squares on every step. The bit only decides whether it joins the product.</figcaption>
-    </figure>
-
-    <p><span class="beat">Sign and zero</span>For a negative exponent, <code>x^(-n) = (1/x)^n</code>. I handle this once, at the top, by replacing <code>x</code> with <code>1/x</code> and <code>n</code> with <code>-n</code>. After that, the loop only ever sees an exponent that is zero or positive. Zero needs no special case: the loop does not run and the answer stays <code>1</code>.</p>
-
-    <p><span class="beat">Write it</span>Start with <code>result = 1</code> and let <code>x</code> be the running base. While <code>n</code> is not zero: if the lowest bit is <code>1</code>, multiply the base into <code>result</code>; then square the base and shift <code>n</code> right by one bit. When <code>n</code> reaches zero, <code>result</code> holds the answer.</p>
-  </div>
+  <!-- ============ INTUITION ============ -->
+  <h2 class="sec">Intuition</h2>
+  <p>Computing <code>x^n</code> by multiplying <code>x</code> by itself <code>n</code> times works, but it is very slow when <code>n</code> is large. Here <code>n</code> can be about two billion, which is far too many multiplications.</p>
+  <p>Binary exponentiation is much faster. It rests on a single relationship between a power and a smaller power:</p>
 
   <div class="callout">
-    <span class="lbl">The algorithm in one sentence</span>
-    When the current bit is <code>1</code>, multiply the answer by the current base. On every step, square the base and drop one bit. There is no counter and no sign handling inside the loop.
+    <span class="lbl">The recurrence</span>
+    If <code>n</code> is even: &nbsp;<code>x^n = (x^2)^(n/2)</code><br>
+    If <code>n</code> is odd: &nbsp;&nbsp;<code>x^n = x &times; (x^2)^((n-1)/2)</code>
   </div>
+
+  <p>Both cases square the base and cut the exponent roughly in half. Since every step at least halves <code>n</code>, the number of multiplications drops from <code>n</code> to about <code>log&#8322; n</code>. For <code>n</code> near two billion, that is roughly 31 steps instead of two billion.</p>
+  <p>Negative powers are handled on their own. Compute <code>x</code> to the power <code>|n|</code> first, then take the reciprocal if <code>n</code> was negative, because <code>x^(-n) = 1 / x^n</code>.</p>
+
+  <!-- ============ WORKED EXAMPLE ============ -->
+  <h2 class="sec">Watch it run</h2>
+  <p>Take <code>x = 2</code>, <code>n = 10</code>. The recursion goes down, squaring the base and halving the exponent, until it reaches the base case. Then it returns back up, multiplying by the base only at the levels where <code>n</code> was odd.</p>
+
+  <figure class="example">
+    <figcaption>Going down: each call squares the base and halves the exponent.</figcaption>
+    <pre class="tight">helper(2, 10)
+helper(4, 5)
+helper(16, 2)
+helper(256, 1)
+helper(65536, 0)   returns 1   (base case)</pre>
+    <figcaption>Coming back up: multiply by this level's base only when its <code>n</code> is odd.</figcaption>
+    <div class="trace-wrap">
+    <table class="trace">
+      <thead><tr><th>returning from</th><th>n</th><th>odd?</th><th>rule</th><th>value</th></tr></thead>
+      <tbody>
+        <tr><td>helper(65536, 0)</td><td>0</td><td class="off">base</td><td>return 1</td><td class="res">1</td></tr>
+        <tr><td>helper(256, 1)</td><td>1</td><td class="on">odd</td><td>256 &times; 1</td><td class="res">256</td></tr>
+        <tr><td>helper(16, 2)</td><td>2</td><td class="off">even</td><td>pass res up</td><td class="res">256</td></tr>
+        <tr><td>helper(4, 5)</td><td>5</td><td class="on">odd</td><td>4 &times; 256</td><td class="res">1,024</td></tr>
+        <tr><td>helper(2, 10)</td><td>10</td><td class="off">even</td><td>pass res up</td><td class="res">1,024</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <figcaption class="foot">The answer is <code>1024 = 2^10</code>. The two odd levels contributed the factors <code>4</code> and <code>256</code>, and <code>4 &times; 256 = 1024</code>. This matches the binary form of 10, which is <code>1010</code>, so <code>2^10 = 2^8 &times; 2^2 = 256 &times; 4</code>.</figcaption>
+  </figure>
+
+  <!-- ============ ALGORITHM ============ -->
+  <h2 class="sec">Algorithm</h2>
+  <ol>
+    <li>Define a recursive function <code>helper(x, n)</code>:
+      <ul>
+        <li>If <code>x</code> is <code>0</code>, return <code>0</code>. Zero to any positive power is zero.</li>
+        <li>If <code>n</code> is <code>0</code>, return <code>1</code>. Any number to the power zero is one. This is the base case that stops the recursion.</li>
+        <li>Otherwise compute <code>res = helper(x * x, n // 2)</code>, which squares the base and halves the exponent.</li>
+        <li>If <code>n</code> is odd, return <code>x * res</code>. If <code>n</code> is even, return <code>res</code>.</li>
+      </ul>
+    </li>
+    <li>Call <code>helper(x, abs(n))</code> so the exponent is never negative during the recursion.</li>
+    <li>If <code>n</code> was negative, return <code>1 / result</code>. Otherwise return <code>result</code>.</li>
+  </ol>
 
   <!-- ============ SOLUTION ============ -->
   <h2 class="sec">The full solution</h2>
   <pre><span class="c-kw">class</span> <span class="c-fn">Solution</span>:
     <span class="c-kw">def</span> <span class="c-fn">myPow</span>(self, x: <span class="c-fn">float</span>, n: <span class="c-fn">int</span>) -&gt; <span class="c-fn">float</span>:
-        <span class="c-kw">if</span> n <span class="c-op">&lt;</span> <span class="c-num">0</span>:              <span class="c-com"># x^(-n) == (1/x)^n, so flip the sign once, up front</span>
-            x, n <span class="c-op">=</span> <span class="c-num">1</span> <span class="c-op">/</span> x, <span class="c-op">-</span>n
-        result <span class="c-op">=</span> <span class="c-num">1.0</span>
-        <span class="c-kw">while</span> n:
-            <span class="c-kw">if</span> n <span class="c-op">&amp;</span> <span class="c-num">1</span>:          <span class="c-com"># lowest bit is 1: multiply in the base at this position</span>
-                result <span class="c-op">*=</span> x
-            x <span class="c-op">*=</span> x             <span class="c-com"># square the base for the next binary position</span>
-            n <span class="c-op">&gt;&gt;=</span> <span class="c-num">1</span>            <span class="c-com"># drop the bit we just handled</span>
-        <span class="c-kw">return</span> result</pre>
-  <p class="muted">Time is <strong>O(log n)</strong>, one iteration per bit of <code>n</code>. Space is <strong>O(1)</strong>. The loop is iterative, so there is no recursion depth concern even at <code>n = 2^31</code>. This solution ships with a 500 case fuzz suite in <code>test_solution.py</code>.</p>
+        <span class="c-kw">def</span> <span class="c-fn">helper</span>(x, n):
+            <span class="c-kw">if</span> x <span class="c-op">==</span> <span class="c-num">0</span>:                     <span class="c-com"># 0 to any positive power is 0</span>
+                <span class="c-kw">return</span> <span class="c-num">0</span>
+            <span class="c-kw">if</span> n <span class="c-op">==</span> <span class="c-num">0</span>:                     <span class="c-com"># base case: anything to the power 0 is 1</span>
+                <span class="c-kw">return</span> <span class="c-num">1</span>
+            res <span class="c-op">=</span> <span class="c-fn">helper</span>(x <span class="c-op">*</span> x, n <span class="c-op">//</span> <span class="c-num">2</span>)    <span class="c-com"># square the base, halve the exponent</span>
+            <span class="c-kw">return</span> x <span class="c-op">*</span> res <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">2</span> <span class="c-kw">else</span> res   <span class="c-com"># odd n keeps one extra factor of x</span>
+
+        res <span class="c-op">=</span> <span class="c-fn">helper</span>(x, <span class="c-fn">abs</span>(n))            <span class="c-com"># compute the magnitude first</span>
+        <span class="c-kw">return</span> res <span class="c-kw">if</span> n <span class="c-op">&gt;=</span> <span class="c-num">0</span> <span class="c-kw">else</span> <span class="c-num">1</span> <span class="c-op">/</span> res  <span class="c-com"># reciprocal when n was negative</span></pre>
+  <p class="muted">Time is <strong>O(log n)</strong>, since the exponent is halved on every call. Space is <strong>O(log n)</strong> for the recursion stack, which reaches a depth of about 31 at the largest allowed <code>n</code>. This solution ships with a 500 case fuzz suite in <code>test_solution.py</code>.</p>
 
   <!-- ============ TAKEAWAY ============ -->
   <h2 class="sec">Takeaway</h2>
   <div class="takeaway">
     <span class="lbl">Pattern to carry forward</span>
-    <p class="principle">When the input is an exponent, or any task that applies the same operation <code>n</code> times with <code>n</code> very large, do not repeat the operation <code>n</code> times. Combine results to cut the count in half each round: square the base and halve the exponent. The answer is the product of the base at each <code>1</code> bit of <code>n</code>.</p>
+    <p class="principle">When the input is an exponent, do not multiply <code>n</code> times. Square the base and halve the exponent on each step. This turns O(n) work into O(log n). An odd exponent simply keeps one extra factor of the current base.</p>
   </div>
-  <p>The same structure powers <strong>modular exponentiation</strong> (<code>pow(a, b, m)</code>), <strong>fast matrix power</strong> (which computes Fibonacci in O(log n)), and <strong>binary lifting</strong> (jumping <code>2^k</code> ancestors in a tree). Learn the shape once and it comes back often.</p>
-  <p class="muted">One lesson from the earlier attempts: if a change makes a wrong solution pass more test cases but you cannot state the rule it now follows, that is not real progress. Write the one sentence rule first. If a piece of code does not serve that rule, remove it.</p>
+  <p>The same idea powers <strong>modular exponentiation</strong> (<code>pow(a, b, m)</code>), <strong>fast matrix power</strong> (which computes Fibonacci in O(log n)), and <strong>binary lifting</strong> (jumping <code>2^k</code> ancestors in a tree). Learn the shape once and it comes back often.</p>
 
   <footer class="p-foot">
     <span>50. Pow(x, n) &middot; O(log n)</span>
