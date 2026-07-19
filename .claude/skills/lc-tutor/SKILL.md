@@ -38,11 +38,17 @@ solution. Your job is to explain that exact solution well.
    Make it clear: fill in the missing steps, define terms, and state why each step
    is correct. Follow the user's structure when they give one (for example an
    Intuition section then an Algorithm section).
-2. **Show, don't assert.** Any step that is not obvious, such as a recurrence, a
-   bitwise trick, or a reindexing, must be shown on a concrete example, never just
-   stated. Pick one small input and walk it through the mechanism in a `.example`
-   figure (use a `.trace` table, or a short before/after listing for a recursion).
-   See `problems/0050-powx-n/tutorial.html` for the reference shape.
+2. **Show, don't assert, with a diagram.** Any step that is not obvious, such as a
+   recurrence, a bitwise trick, or a reindexing, must be shown on a concrete
+   example, never just stated. Use a Mermaid diagram, not a text table. Choose the
+   diagram type that fits the solution:
+   - a **recursion tree** or **call graph** for a recursive solution (trace one
+     concrete input, solid arrows going down, dashed arrows returning values up),
+   - a **flowchart** for branch heavy control flow,
+   - a **mindmap** when a concept overview helps.
+   Put it in `<figure class="diagram"><pre class="mermaid">...</pre></figure>`. See the
+   "Watch it run" section of `problems/0050-powx-n/tutorial.html` for the reference
+   shape, and the Mermaid setup note below.
 3. **Write plainly.** This is the most important style rule.
    - No em dashes and no en dashes. Use a period, a comma, or parentheses instead.
    - No invented words or forced coinages. If a term is not standard English or
@@ -120,6 +126,24 @@ Then run `python build_index.py` (sorts ascending by number).
   - tutorial: `<baseUrl>problems/<folder>/tutorial.html`
   - index: `<baseUrl>`
 - Note that Pages can take about a minute to update.
+
+## Mermaid diagrams
+Diagrams render with Mermaid, vendored at `assets/mermaid.min.js` (the UMD build, so
+diagrams work when the page is opened locally with `file://` as well as on Pages).
+Every tutorial ends with the two script tags from `template.html`: the vendored
+`<script src="../../assets/mermaid.min.js">` and a `mermaid.initialize(...)` call
+with the light theme. Do not use the CDN and do not use the ES module build, since
+browsers block ES modules under `file://`.
+
+Authoring rules that avoid parser errors:
+- Wrap each diagram in `<figure class="diagram"><pre class="mermaid"> ... </pre></figure>`.
+- Quote every flowchart node label, for example `A["helper(x, n)"]`, because labels
+  contain parentheses and commas.
+- Write special characters as HTML entities inside the `<pre>` (`&middot;`, `&times;`,
+  `&rarr;`). The browser decodes them before Mermaid reads the text.
+- In a mindmap, node text cannot be quoted, so avoid parentheses and other symbols;
+  use plain words.
+- Keep labels short. Put longer explanation in the `figcaption`, not in nodes.
 
 ## Idempotency
 Re-running a problem overwrites its files and its manifest entry, and rebuilds the

@@ -38,29 +38,23 @@
 
   <!-- ============ WORKED EXAMPLE ============ -->
   <h2 class="sec">Watch it run</h2>
-  <p>Take <code>x = 2</code>, <code>n = 10</code>. The recursion goes down, squaring the base and halving the exponent, until it reaches the base case. Then it returns back up, multiplying by the base only at the levels where <code>n</code> was odd.</p>
+  <p>Take <code>x = 2</code>, <code>n = 10</code>. The recursion follows the solid arrows down, squaring the base and halving the exponent, until it reaches the base case. Then it returns up the dashed arrows, multiplying by the base only at the levels where <code>n</code> was odd.</p>
 
-  <figure class="example">
-    <figcaption>Going down: each call squares the base and halves the exponent.</figcaption>
-    <pre class="tight">helper(2, 10)
-helper(4, 5)
-helper(16, 2)
-helper(256, 1)
-helper(65536, 0)   returns 1   (base case)</pre>
-    <figcaption>Coming back up: multiply by this level's base only when its <code>n</code> is odd.</figcaption>
-    <div class="trace-wrap">
-    <table class="trace">
-      <thead><tr><th>returning from</th><th>n</th><th>odd?</th><th>rule</th><th>value</th></tr></thead>
-      <tbody>
-        <tr><td>helper(65536, 0)</td><td>0</td><td class="off">base</td><td>return 1</td><td class="res">1</td></tr>
-        <tr><td>helper(256, 1)</td><td>1</td><td class="on">odd</td><td>256 &times; 1</td><td class="res">256</td></tr>
-        <tr><td>helper(16, 2)</td><td>2</td><td class="off">even</td><td>pass res up</td><td class="res">256</td></tr>
-        <tr><td>helper(4, 5)</td><td>5</td><td class="on">odd</td><td>4 &times; 256</td><td class="res">1,024</td></tr>
-        <tr><td>helper(2, 10)</td><td>10</td><td class="off">even</td><td>pass res up</td><td class="res">1,024</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <figcaption class="foot">The answer is <code>1024 = 2^10</code>. The two odd levels contributed the factors <code>4</code> and <code>256</code>, and <code>4 &times; 256 = 1024</code>. This matches the binary form of 10, which is <code>1010</code>, so <code>2^10 = 2^8 &times; 2^2 = 256 &times; 4</code>.</figcaption>
+  <figure class="diagram">
+    <figcaption class="top">recursion trace of 2 ^ 10 &nbsp;&middot;&nbsp; solid = calls going down &nbsp;&middot;&nbsp; dashed = values returning up</figcaption>
+    <pre class="mermaid">
+flowchart TD
+    A["helper(2, 10) &middot; even"] --> B["helper(4, 5) &middot; odd"]
+    B --> C["helper(16, 2) &middot; even"]
+    C --> D["helper(256, 1) &middot; odd"]
+    D --> E["helper(65536, 0) &middot; base = 1"]
+    E -. "returns 1" .-> D
+    D -. "256 &times; 1 = 256" .-> C
+    C -. "pass up 256" .-> B
+    B -. "4 &times; 256 = 1024" .-> A
+    A -. "pass up 1024" .-> ANS(["answer = 1024"])
+</pre>
+    <figcaption>The two odd levels contributed the factors 4 and 256, and 4 &times; 256 = 1024 = 2^10. This matches the binary form of 10, which is 1010, so 2^10 = 2^8 &times; 2^2 = 256 &times; 4.</figcaption>
   </figure>
 
   <!-- ============ ALGORITHM ============ -->
@@ -108,5 +102,24 @@ helper(65536, 0)   returns 1   (base case)</pre>
   </footer>
 
 </div>
+
+<script src="../../assets/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+      fontSize: '14px',
+      primaryColor: '#eff4ff',
+      primaryBorderColor: '#c9d7f5',
+      primaryTextColor: '#1a1a1a',
+      lineColor: '#9aa7b8',
+      secondaryColor: '#f4f7ff',
+      tertiaryColor: '#ffffff'
+    },
+    flowchart: { curve: 'basis', htmlLabels: true }
+  });
+</script>
 </body>
 </html>

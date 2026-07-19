@@ -32,14 +32,15 @@
   </div>
   {{INTUITION_CONTINUED}}
 
-  <!-- ============ WORKED EXAMPLE ============ -->
+  <!-- ============ WORKED EXAMPLE (Mermaid diagram) ============ -->
   <h2 class="sec">Watch it run</h2>
   <p>{{EXAMPLE_SETUP}}</p>
-  <figure class="example">
-    <figcaption>{{EXAMPLE_CAPTION}}</figcaption>
-    <!-- a .trace table, or short before/after <pre> listings for a recursion -->
-    {{EXAMPLE_BODY}}
-    <figcaption class="foot">{{EXAMPLE_FOOT}}</figcaption>
+  <figure class="diagram">
+    <figcaption class="top">{{DIAGRAM_CAPTION}}</figcaption>
+    <pre class="mermaid">
+{{MERMAID_DEFINITION}}
+</pre>
+    <figcaption>{{EXAMPLE_FOOT}}</figcaption>
   </figure>
 
   <!-- ============ ALGORITHM ============ -->
@@ -67,5 +68,25 @@
   </footer>
 
 </div>
+
+<!-- Mermaid: vendored UMD build so diagrams render locally (file://) and on Pages -->
+<script src="../../assets/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+      fontSize: '14px',
+      primaryColor: '#eff4ff',
+      primaryBorderColor: '#c9d7f5',
+      primaryTextColor: '#1a1a1a',
+      lineColor: '#9aa7b8',
+      secondaryColor: '#f4f7ff',
+      tertiaryColor: '#ffffff'
+    },
+    flowchart: { curve: 'basis', htmlLabels: true }
+  });
+</script>
 </body>
 </html>

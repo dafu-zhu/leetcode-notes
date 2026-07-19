@@ -137,6 +137,13 @@ em{font-style:italic;color:var(--ink)}
 .trace sup{font-size:.72em}
 .example pre{margin:10px 0;background:#fff}
 
+/* mermaid diagram figure */
+figure.diagram{margin:22px 0;padding:18px 18px 12px;border:1px solid var(--line-strong);border-radius:12px;background:var(--paper)}
+figure.diagram .mermaid{display:flex;justify-content:center;overflow-x:auto;background:transparent;line-height:normal}
+figure.diagram .mermaid:not([data-processed]){color:var(--faint);font-family:var(--mono);font-size:12px;white-space:pre}
+figure.diagram figcaption{font-size:13.5px;color:var(--muted);margin-top:12px;text-align:center}
+figure.diagram figcaption.top{margin:0 0 14px;text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint)}
+
 /* code */
 pre{
   background:var(--code-bg);border:1px solid var(--line-strong);border-radius:10px;
