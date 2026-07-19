@@ -1,0 +1,20 @@
+{
+  "repo": "leetcode-notes",
+  "owner": "dafu-zhu",
+  "baseUrl": "https://dafu-zhu.github.io/leetcode-notes/",
+  "problemsDir": "problems",
+  "manifest": "data/problems.json",
+  "index": "index.html",
+  "styleFile": "style.css",
+  "styleHrefFromIndex": "style.css",
+  "styleHrefFromTutorial": "../../style.css",
+  "folderNaming": "{num4}-{slug}",
+  "tutorialFile": "tutorial.html",
+  "solutionFile": "solution.py",
+  "attemptFile": "attempt.py",
+  "testFile": "test_solution.py",
+  "templateFile": ".claude/skills/lc-tutor/template.html",
+  "buildIndexScript": "build_index.py",
+  "defaultLanguage": "python3",
+  "author": "dafu-zhu"
+}

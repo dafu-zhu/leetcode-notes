@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50. Pow(x, n) — LeetCode Notes</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="crumb"><a href="../../index.html">&larr; LeetCode Notes</a></nav>
+
+  <header class="p-head">
+    <div class="kicker">LeetCode 50</div>
+    <h1>Pow(x, n)</h1>
+    <div class="meta">
+      <span class="diff medium">Medium</span>
+      <a class="lc-link" href="https://leetcode.com/problems/powx-n/">leetcode.com &nearr;</a>
+    </div>
+  </header>
+
+  <!-- ============ VERDICT ============ -->
+  <div class="verdict partial">Idea: sound core, broken execution</div>
+  <p>Your instinct is exactly the right one: <strong>square the base to halve the exponent</strong>. That's binary exponentiation, and it's the intended O(log n) solution. The idea is a keeper.</p>
+  <p>Where it went sideways is the <em>odd-exponent correction</em>. An odd step doesn't add to a counter &mdash; it multiplies in the current base <em>once</em>. Tracking it as an integer <code>count</code> and re-injecting <code>x0**count</code> at every level both compounds (positive <code>n</code>) and ignores the sign (negative <code>n</code>), so it lands on the right answer only for certain bit patterns.</p>
+  <p class="muted">That's the whole critique. Keeping the idea, dropping the code &mdash; let's rebuild it from the first read.</p>
+
+  <!-- ============ FROM SCRATCH ============ -->
+  <h2 class="sec">From scratch &mdash; thinking out loud</h2>
+  <p class="lede">Pretend I'm at the whiteboard seeing this cold. Here's the actual monologue.</p>
+
+  <div class="think">
+    <p><span class="beat">Read it</span>Compute <code>x</code> to the <code>n</code>. Look at the constraints: <code>n</code> can be as large as <code>2^31</code> &mdash; about two billion &mdash; and it can be negative or zero. So the naive "multiply <code>x</code> by itself <code>n</code> times" is O(n): two billion multiplications. Too slow. The real question the problem is asking is: <em>can I compute <code>x^n</code> in far fewer than <code>n</code> multiplications?</em></p>
+
+    <p><span class="beat">Find the leverage</span>I want to reuse work. Here's the identity that unlocks it: <code>x^n = (x&middot;x)^(n/2)</code>. One squaring of the base <em>halves</em> the exponent. If I can keep halving, I go from <code>n</code> steps to <code>log&#8322; n</code> steps &mdash; about 31 instead of two billion. <em>That</em> is the entry point. The trigger to memorize: "exponent, and it must be sub-linear" &rarr; "halve the exponent by squaring the base."</p>
+
+    <p><span class="beat">Handle the odd case</span>What if <code>n</code> is odd? Then <code>n/2</code> isn't clean. Split off one factor: <code>x^n = x &middot; (x&middot;x)^((n-1)/2)</code>. So an odd exponent costs me exactly <strong>one extra multiply by the current base</strong>, and then it's even again. That single sentence is the entire algorithm &mdash; and it's precisely the step the broken version fumbled.</p>
+
+    <p><span class="beat">Reframe as binary</span>Squaring-and-halving is just reading <code>n</code> in binary. Position <code>i</code> contributes <code>x^(2^i)</code>: the base I get by squaring <code>i</code> times. The answer is the product of <code>x^(2^i)</code> over every position where <code>n</code> has a <code>1</code> bit. So I walk the bits from the bottom: keep a <em>running base</em> that I square every step, and whenever the current bit is <code>1</code>, multiply that base into the answer.</p>
+
+    <p><span class="beat">Sign and zero</span>Negatives: <code>x^(-n) = (1/x)^n</code>. I handle it <em>once</em>, at the top &mdash; flip <code>x</code> to <code>1/x</code> and <code>n</code> to <code>-n</code> &mdash; so the core loop only ever sees a non-negative exponent. Zero falls out for free: the loop just doesn't run and the answer stays <code>1</code>.</p>
+
+    <p><span class="beat">Write it</span>A running <code>result = 1</code>, a running <code>base = x</code>. While <code>n</code> isn't zero: if the low bit is set, fold the base into <code>result</code>; then square the base and shift <code>n</code> right. Done.</p>
+  </div>
+
+  <div class="callout">
+    <span class="lbl">The algorithm in one sentence</span>
+    On an odd bit, multiply the answer by the <strong>current base</strong>, once; on every step, square the base and drop a bit. No counter, no sign bookkeeping inside the loop.
+  </div>
+
+  <!-- ============ SOLUTION ============ -->
+  <h2 class="sec">The full solution</h2>
+  <pre><span class="c-kw">class</span> <span class="c-fn">Solution</span>:
+    <span class="c-kw">def</span> <span class="c-fn">myPow</span>(self, x: <span class="c-fn">float</span>, n: <span class="c-fn">int</span>) -&gt; <span class="c-fn">float</span>:
+        <span class="c-kw">if</span> n <span class="c-op">&lt;</span> <span class="c-num">0</span>:              <span class="c-com"># x^(-n) == (1/x)^n — sign handled ONCE, up front</span>
+            x, n <span class="c-op">=</span> <span class="c-num">1</span> <span class="c-op">/</span> x, <span class="c-op">-</span>n
+        result <span class="c-op">=</span> <span class="c-num">1.0</span>
+        <span class="c-kw">while</span> n:
+            <span class="c-kw">if</span> n <span class="c-op">&amp;</span> <span class="c-num">1</span>:          <span class="c-com"># low bit set -> multiply in the base at this position</span>
+                result <span class="c-op">*=</span> x
+            x <span class="c-op">*=</span> x             <span class="c-com"># square the base for the next binary position</span>
+            n <span class="c-op">&gt;&gt;=</span> <span class="c-num">1</span>            <span class="c-com"># drop the consumed bit</span>
+        <span class="c-kw">return</span> result</pre>
+  <p class="muted">Time <strong>O(log n)</strong> &mdash; one iteration per bit of <code>n</code>. Space <strong>O(1)</strong>. Iterative, so no recursion-depth worry at <code>n = 2^31</code>. This exact file ships with a 500-case fuzz suite in <code>test_solution.py</code>.</p>
+
+  <!-- ============ TAKEAWAY ============ -->
+  <h2 class="sec">Takeaway</h2>
+  <div class="takeaway">
+    <span class="lbl">Pattern &middot; carry forward</span>
+    <p class="principle">When the input is an <em>exponent</em> &mdash; or any "apply this operation <code>n</code> times" with <code>n</code> huge &mdash; don't iterate <code>n</code> times. Halve the count by combining results: square the base, halve the exponent. The answer is the product of the base at each <code>1</code>-bit of <code>n</code>.</p>
+  </div>
+  <p>Same skeleton powers <strong>modular exponentiation</strong> (<code>pow(a, b, m)</code>), <strong>fast matrix power</strong> (Fibonacci in O(log n)), and <strong>binary lifting</strong> (jump 2^k ancestors in a tree). Learn the shape once; it reappears constantly.</p>
+  <p class="muted">And the meta-lesson from the two wrong tries: when a fix makes a wrong solution <em>pass more tests</em> without your being able to state the invariant it now satisfies, that's not progress &mdash; it's a better coincidence. Write the one-sentence invariant first; if code doesn't serve it, delete that code.</p>
+
+  <footer class="p-foot">
+    <span>50. Pow(x, n) &middot; O(log n)</span>
+    <span>verified &middot; 21 pressure tests</span>
+  </footer>
+
+</div>
+</body>
+</html>

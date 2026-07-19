@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{NUM}}. {{TITLE}} — LeetCode Notes</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="crumb"><a href="../../index.html">&larr; LeetCode Notes</a></nav>
+
+  <header class="p-head">
+    <div class="kicker">LeetCode {{NUM}}</div>
+    <h1>{{TITLE}}</h1>
+    <div class="meta">
+      <span class="diff {{DIFF_CLASS}}">{{DIFFICULTY}}</span>
+      <a class="lc-link" href="{{LEETCODE_URL}}">leetcode.com &nearr;</a>
+    </div>
+  </header>
+
+  <!-- ============ VERDICT ============ -->
+  <!-- verdict class = sound | partial | wrong -->
+  <div class="verdict {{VERDICT_CLASS}}">{{VERDICT_HEADLINE}}</div>
+  {{VERDICT_PARAGRAPHS}}
+  <p class="muted">Keeping the idea, dropping the code &mdash; let's rebuild it from the first read.</p>
+
+  <!-- ============ FROM SCRATCH ============ -->
+  <h2 class="sec">From scratch &mdash; thinking out loud</h2>
+  <p class="lede">{{LEDE}}</p>
+
+  <div class="think">
+    <!-- one <p> per beat: <span class="beat">Label</span>monologue... -->
+    {{THINK_BEATS}}
+  </div>
+
+  <div class="callout">
+    <span class="lbl">The algorithm in one sentence</span>
+    {{ALGORITHM_ONE_LINER}}
+  </div>
+
+  <!-- ============ SOLUTION ============ -->
+  <h2 class="sec">The full solution</h2>
+  <pre>{{SOLUTION_CODE_HTML}}</pre>
+  <p class="muted">{{COMPLEXITY_NOTE}}</p>
+
+  <!-- ============ TAKEAWAY ============ -->
+  <h2 class="sec">Takeaway</h2>
+  <div class="takeaway">
+    <span class="lbl">Pattern &middot; carry forward</span>
+    <p class="principle">{{PRINCIPLE}}</p>
+  </div>
+  {{PATTERN_RECURRENCE}}
+
+  <footer class="p-foot">
+    <span>{{NUM}}. {{TITLE}} &middot; {{COMPLEXITY_SHORT}}</span>
+    <span>verified &middot; {{TEST_COUNT}} pressure tests</span>
+  </footer>
+
+</div>
+</body>
+</html>
