@@ -24,9 +24,9 @@ user's thinking, throw the code away, and rebuild the solution from the first re
    not walk through every bug in their code. One or two crisp sentences on the
    single root flaw is the ceiling.
 2. **Judge the IDEA, not the code.** Decide one of three verdicts:
-   - `sound`   — the core approach is correct; only execution was off.
-   - `partial` — the right instinct is in there but the key mechanism is wrong.
-   - `wrong`   — the approach can't work; explain *why* in one clear paragraph.
+   - `sound`: the core approach is correct; only execution was off.
+   - `partial`: the right instinct is there but the key mechanism is wrong.
+   - `wrong`: the approach cannot work; explain why in one clear paragraph.
 3. **Throw the code away.** After the verdict, explicitly drop their code and
    rebuild. Never iterate on their broken structure.
 4. **Teach from scratch, thinking out loud.** First person, present tense, as if
@@ -34,8 +34,8 @@ user's thinking, throw the code away, and rebuild the solution from the first re
    what's it really asking → where's the leverage / entry point → develop the
    approach step by step → edge cases → write it. Name the *trigger* that should
    fire next time ("exponent + must be sub-linear → square-and-halve").
-5. **Show, don't assert.** Any step that is non-obvious — a bitwise trick, a
-   reindexing, a DP recurrence, a two-pointer invariant — must be *visualized on a
+5. **Show, don't assert.** Any step that is not obvious, such as a bitwise trick, a
+   reindexing, a DP recurrence, or a two pointer invariant, must be *visualized on a
    concrete example*, never just stated. Pick one small input and walk it through
    the mechanism in a `.example` figure with a `.trace` table (columns = the state
    at each step; highlight the cells that "fire"). If the reader could still ask
@@ -43,6 +43,16 @@ user's thinking, throw the code away, and rebuild the solution from the first re
    binary" figure in `problems/0050-powx-n/tutorial.html` for the reference shape.
 6. **End with the transferable pattern**, plus a one-sentence invariant/principle
    and where else the shape shows up.
+7. **Write plainly.** This is the most important style rule. Write the way a clear
+   teacher speaks, not the way marketing copy reads.
+   - No em dashes and no en dashes. Use a period, a comma, or parentheses instead.
+   - No invented words or forced coinages. If a term is not standard English or
+     standard CS vocabulary, either define it in plain words or do not use it.
+   - No slogans, no punchy one-liners for their own sake, no "clever" phrasing. If
+     a sentence sounds like an ad or a tweet, rewrite it as a plain statement.
+   - Short, direct sentences. Prefer common words. Say the thing, then stop.
+   - Test each sentence by reading it aloud. If a normal person would not say it
+     that way in conversation, rewrite it.
 
 ## Workflow
 
@@ -64,20 +74,21 @@ slug against the real leetcode.com URL if unsure.
 - Write the correct `solution.py` (LeetCode class signature) and the user's verbatim
   code as `attempt.py`.
 - Build the strongest oracle available: brute force, a trusted library call, or
-  known closed forms. Use it to find the *exact* inputs where the attempt fails —
-  cite those real failures in the verdict, never hand-wave.
+  known closed forms. Use it to find the *exact* inputs where the attempt fails,
+  and cite those real failures in the verdict. Never hand wave.
 - If genuinely not runnable (e.g. needs LeetCode's internal types), fall back to
   static reasoning and say so in the page.
 
 ### 4. Write the pytest pressure suite  (`test_solution.py`)
 LeetCode-style, four layers, all green against `solution.py`:
-1. **examples** — the exact cases from the statement.
-2. **boundaries** — derived from the problem's constraints (min/max n, empty, 1
-   element, extreme values, sign edges…).
-3. **fuzz** — a few hundred **seeded-random** inputs vs. the oracle (deterministic;
-   pick input ranges that stay inside the stated constraints so nothing over/underflows).
-4. **scale/perf** — a max-constraint input returns within a loose time budget and
-   doesn't blow the recursion limit.
+1. **examples**: the exact cases from the statement.
+2. **boundaries**: derived from the problem's constraints (min/max n, empty, one
+   element, extreme values, sign edges).
+3. **fuzz**: a few hundred seeded random inputs compared against the oracle. Keep
+   it deterministic, and pick input ranges that stay inside the stated constraints
+   so nothing overflows or underflows.
+4. **scale/perf**: a max constraint input returns within a loose time budget and
+   does not blow the recursion limit.
 Import solution/attempt via `from lc_harness import load_solution, load_attempt`
 (handles path loading; keeps modules collision-free). Add a final documentation
 test asserting `attempt.py` disagrees with truth on its known-bad inputs, so the
@@ -89,11 +100,11 @@ Copy `.claude/skills/lc-tutor/template.html` and fill every `{{PLACEHOLDER}}`.
 Link `../../style.css` (never inline CSS). Sections, in order:
 - crumb back to `../../index.html`
 - header: kicker `LeetCode <num>`, `<h1>` title, difficulty dot, leetcode link
-- **verdict** div with class `sound|partial|wrong` + 2–4 sentence idea judgement +
-  the "keeping the idea, dropping the code" line
-- **From scratch — thinking out loud**: a `.think` block of `.beat`-labelled
+- **verdict** div with class `sound|partial|wrong`, then a 2 to 4 sentence idea
+  judgement, then the "we keep the idea and rebuild the code" line
+- **Solving it from scratch**: a `.think` block of `.beat`-labelled
   paragraphs (the monologue). Embed a `.example` figure (with a `.trace` table) at
-  the step that is hardest to see — walk one concrete input through it (per voice
+  the step that is hardest to see, and walk one concrete input through it (per voice
   rule 5).
 - a `.callout` with the algorithm in one sentence
 - **The full solution**: highlighted `<pre>` (spans `c-kw c-fn c-num c-str c-com c-op`)
@@ -119,4 +130,4 @@ Then run `python build_index.py` (deterministic; sorts ascending by number).
 
 ## Idempotency
 Re-running a problem overwrites its four files and its manifest entry, and rebuilds
-the index — never creates a duplicate row or folder.
+the index. It never creates a duplicate row or folder.

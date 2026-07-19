@@ -35,7 +35,7 @@ PAGE = """<!DOCTYPE html>
 <div class="wrap">
   <header class="site-head">
     <h1>LeetCode Notes</h1>
-    <p class="tagline">Idea-first solutions, taught from scratch &mdash; each one pressure-tested.</p>
+    <p class="tagline">Idea-first solutions, taught from scratch. Each one pressure tested.</p>
     <p class="count">{count} problem{plural}</p>
   </header>
   <main class="plist">

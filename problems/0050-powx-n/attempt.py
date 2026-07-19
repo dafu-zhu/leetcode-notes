@@ -1,4 +1,4 @@
-"""Original attempt (kept for the record — this is the BROKEN version).
+"""Original attempt (kept for the record). This is the BROKEN version.
 
 Idea was binary exponentiation, but the odd-bit "remainder" was tracked as an
 integer `count` and then re-injected as x0**count at every level of the

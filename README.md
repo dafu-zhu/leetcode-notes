@@ -1,6 +1,6 @@
 # LeetCode Notes
 
-Idea-first LeetCode solutions, taught from scratch — each one pressure-tested.
+Idea-first LeetCode solutions, taught from scratch. Each one pressure tested.
 
 **Live site:** https://dafu-zhu.github.io/leetcode-notes/
 
@@ -19,7 +19,7 @@ problems/<NNNN-slug>/
     solution.py                the correct solution, importable
     attempt.py                 the original attempt, for the record
     test_solution.py           pytest pressure suite (examples/boundaries/fuzz/scale)
-data/problems.json             manifest — source of truth for the index
+data/problems.json             manifest, the source of truth for the index
 config.json                    paths & naming for the skill
 build_index.py                 regenerates index.html from the manifest
 conftest.py / lc_harness.py    test harness (per-folder solution loading)

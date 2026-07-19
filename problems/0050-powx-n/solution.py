@@ -1,4 +1,5 @@
-"""50. Pow(x, n) — https://leetcode.com/problems/powx-n/
+"""50. Pow(x, n)
+https://leetcode.com/problems/powx-n/
 
 Binary (fast) exponentiation. Read n in binary from the low bit up: whenever
 the current bit is 1, the running answer owes a factor of the *current* base;
@@ -8,7 +9,7 @@ every step squares the base and shifts n right. O(log n) time, O(1) space.
 
 class Solution:
     def myPow(self, x: float, n: int) -> float:
-        if n < 0:              # x^(-n) == (1/x)^n — handle the sign once, up front
+        if n < 0:              # x^(-n) == (1/x)^n, so flip the sign once, up front
             x, n = 1 / x, -n
         result = 1.0
         while n:

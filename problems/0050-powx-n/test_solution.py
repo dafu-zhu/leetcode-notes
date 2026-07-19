@@ -1,10 +1,10 @@
-"""Pressure test for 50. Pow(x, n) — LeetCode-style.
+"""Pressure test for 50. Pow(x, n), LeetCode style.
 
 Four layers hit the CORRECT solution and must all pass:
-  1. examples      — the cases printed in the problem statement
-  2. boundaries    — pulled from the stated constraints
-  3. fuzz          — 500 seeded-random inputs vs. Python's float ** oracle
-  4. scale/perf    — max-constraint n returns fast (O(log n), no timeout)
+  1. examples      : the cases printed in the problem statement
+  2. boundaries    : pulled from the stated constraints
+  3. fuzz          : 500 seeded-random inputs vs. Python's float ** oracle
+  4. scale/perf    : max-constraint n returns fast (O(log n), no timeout)
 
 A final section documents that the original attempt.py is broken as the
 tutorial claims, so the teaching example can't silently rot.
@@ -73,7 +73,7 @@ def test_scale_is_logarithmic():
     assert solve(1.0, 2**31 - 1) == 1.0            # exact, huge exponent
     solve(2.0, 2**31 - 1)                          # overflows to inf but must NOT loop 2^31 times
     elapsed = time.perf_counter() - start
-    assert elapsed < 0.5, f"too slow ({elapsed:.3f}s) — not O(log n)?"
+    assert elapsed < 0.5, f"too slow ({elapsed:.3f}s), not O(log n)?"
 
 
 # ---------- documentation: attempt.py is broken as claimed ----------
